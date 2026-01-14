@@ -34,9 +34,14 @@ const error = ref<string | null>(null)
 const validationErrors = ref<Record<string, string>>({})
 
 const showPassword = ref(false)
+const showConfirmPassword = ref(false)
 
 const togglePassword = () => {
   showPassword.value = !showPassword.value
+}
+
+const toggleConfirmPassword = () => {
+  showConfirmPassword.value = !showConfirmPassword.value
 }
 
 function handleFileChange(event: Event, fieldName: keyof CreateUserPayload) {
@@ -208,100 +213,109 @@ function handleCancel() {
 
             <input id="password" v-model="formData.password" :type="showPassword ? 'text' : 'password'"
               placeholder="Enter password" required :disabled="isLoading" />
+
             <small>Min 8 chars, uppercase, lowercase, number, special char</small>
-            <span v-if="validationErrors.password" class="error-text">{{ validationErrors.password }}</span>
+            <span v-if="validationErrors.password" class="error-text">
+              {{ validationErrors.password }}
+            </span>
           </div>
+
           <div class="form-group" :class="{ 'has-error': validationErrors.password_confirmation }">
-            <label for="password_confirmation" @click.prevent="togglePassword" style="cursor: pointer;">
-              Password
+            <label for="password_confirmation" @click.prevent="toggleConfirmPassword" style="cursor: pointer;">
+              Confirm Password
               <span class="toggle-text">
-                ({{ showPassword ? 'Hide' : 'Show' }})
+                ({{ showConfirmPassword ? 'Hide' : 'Show' }})
               </span>
             </label>
-            <input v-model="formData.password_confirmation" id="password_confirmation" :type="showPassword ? 'text' : 'password'" required />
-            <span v-if="validationErrors.password_confirmation" class="error-text">{{
-              validationErrors.password_confirmation }}</span>
-          </div>
-        </div>
-      </div>
 
-      <div class="form-section">
-        <h2>Emergency Contact</h2>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="contact_first_name">Contact First Name *</label>
-            <input v-model="formData.contact_first_name" id="contact_first_name" type="text" required />
+            <input id="password_confirmation" v-model="formData.password_confirmation"
+              :type="showConfirmPassword ? 'text' : 'password'" required />
+
+            <span v-if="validationErrors.password_confirmation" class="error-text">
+              {{ validationErrors.password_confirmation }}
+            </span>
           </div>
-          <div class="form-group">
-            <label for="contact_last_name">Contact Last Name *</label>
-            <input v-model="formData.contact_last_name" id="contact_last_name" type="text" required />
-          </div>
+
         </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label for="contact_relationship">Relationship *</label>
-            <input v-model="formData.contact_relationship" id="contact_relationship" type="text" required />
+        <div class="form-section">
+          <h2>Emergency Contact</h2>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="contact_first_name">Contact First Name *</label>
+              <input v-model="formData.contact_first_name" id="contact_first_name" type="text" required />
+            </div>
+            <div class="form-group">
+              <label for="contact_last_name">Contact Last Name *</label>
+              <input v-model="formData.contact_last_name" id="contact_last_name" type="text" required />
+            </div>
           </div>
-          <div class="form-group" :class="{ 'has-error': validationErrors.contact_phone_number }">
-            <label for="contact_phone_number">Contact Phone *</label>
-            <input v-model="formData.contact_phone_number" id="contact_phone_number" type="tel"
-              placeholder="+1234567890" required />
-            <span v-if="validationErrors.contact_phone_number" class="error-text">{{
-              validationErrors.contact_phone_number }}</span>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="contact_relationship">Relationship *</label>
+              <input v-model="formData.contact_relationship" id="contact_relationship" type="text" required />
+            </div>
+            <div class="form-group" :class="{ 'has-error': validationErrors.contact_phone_number }">
+              <label for="contact_phone_number">Contact Phone *</label>
+              <input v-model="formData.contact_phone_number" id="contact_phone_number" type="tel"
+                placeholder="+1234567890" required />
+              <span v-if="validationErrors.contact_phone_number" class="error-text">{{
+                validationErrors.contact_phone_number }}</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="contact_address">Contact Address *</label>
+            <textarea v-model="formData.contact_address" id="contact_address" rows="2" required></textarea>
           </div>
         </div>
 
-        <div class="form-group">
-          <label for="contact_address">Contact Address *</label>
-          <textarea v-model="formData.contact_address" id="contact_address" rows="2" required></textarea>
-        </div>
-      </div>
-
-      <div class="form-section">
-        <h2>Documents Upload</h2>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="professtional_photo">Professional Photo</label>
-            <input @change="handleFileChange($event, 'professtional_photo')" id="professtional_photo" type="file"
-              accept="image/*" />
+        <div class="form-section">
+          <h2>Documents Upload</h2>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="professtional_photo">Professional Photo</label>
+              <input @change="handleFileChange($event, 'professtional_photo')" id="professtional_photo" type="file"
+                accept="image/*" />
+            </div>
+            <div class="form-group">
+              <label for="nationality_card">Nationality Card</label>
+              <input @change="handleFileChange($event, 'nationality_card')" id="nationality_card" type="file"
+                accept="image/*,application/pdf" />
+            </div>
           </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="family_book">Family Book</label>
+              <input @change="handleFileChange($event, 'family_book')" id="family_book" type="file"
+                accept="image/*,application/pdf" />
+            </div>
+            <div class="form-group">
+              <label for="birth_certificate">Birth Certificate</label>
+              <input @change="handleFileChange($event, 'birth_certificate')" id="birth_certificate" type="file"
+                accept="image/*,application/pdf" />
+            </div>
+          </div>
+
           <div class="form-group">
-            <label for="nationality_card">Nationality Card</label>
-            <input @change="handleFileChange($event, 'nationality_card')" id="nationality_card" type="file"
+            <label for="degreee_certificate">Degree Certificate</label>
+            <input @change="handleFileChange($event, 'degreee_certificate')" id="degreee_certificate" type="file"
               accept="image/*,application/pdf" />
           </div>
         </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label for="family_book">Family Book</label>
-            <input @change="handleFileChange($event, 'family_book')" id="family_book" type="file"
-              accept="image/*,application/pdf" />
-          </div>
-          <div class="form-group">
-            <label for="birth_certificate">Birth Certificate</label>
-            <input @change="handleFileChange($event, 'birth_certificate')" id="birth_certificate" type="file"
-              accept="image/*,application/pdf" />
-          </div>
+        <div v-if="error" class="error-message">
+          {{ error }}
         </div>
 
-        <div class="form-group">
-          <label for="degreee_certificate">Degree Certificate</label>
-          <input @change="handleFileChange($event, 'degreee_certificate')" id="degreee_certificate" type="file"
-            accept="image/*,application/pdf" />
+        <div class="form-actions">
+          <button type="submit" :disabled="isLoading" class="btn-submit">
+            {{ isLoading ? 'Creating...' : 'Create User' }}
+          </button>
+          <button type="button" @click="handleCancel" class="btn-cancel">Cancel</button>
         </div>
-      </div>
-
-      <div v-if="error" class="error-message">
-        {{ error }}
-      </div>
-
-      <div class="form-actions">
-        <button type="submit" :disabled="isLoading" class="btn-submit">
-          {{ isLoading ? 'Creating...' : 'Create User' }}
-        </button>
-        <button type="button" @click="handleCancel" class="btn-cancel">Cancel</button>
       </div>
     </form>
   </div>
