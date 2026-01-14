@@ -33,6 +33,12 @@ const isLoading = ref(false)
 const error = ref<string | null>(null)
 const validationErrors = ref<Record<string, string>>({})
 
+const showPassword = ref(false)
+
+const togglePassword = () => {
+  showPassword.value = !showPassword.value
+}
+
 function handleFileChange(event: Event, fieldName: keyof CreateUserPayload) {
   const input = event.target as HTMLInputElement
   if (input.files && input.files[0]) {
@@ -193,8 +199,25 @@ function handleCancel() {
 
         <div class="form-row">
           <div class="form-group" :class="{ 'has-error': validationErrors.password }">
-            <label for="password">Password *</label>
-            <input v-model="formData.password" id="password" type="password" required />
+           <label
+      for="password"
+      @click.prevent="togglePassword"
+      style="cursor: pointer;"
+    >
+      Password
+      <span class="toggle-text">
+        ({{ showPassword ? 'Hide' : 'Show' }})
+      </span>
+    </label>
+
+    <input
+      id="password"
+      v-model="formData.password"
+      :type="showPassword ? 'text' : 'password'"
+      placeholder="Enter password"
+      required
+      :disabled="isLoading"
+    />
             <small>Min 8 chars, uppercase, lowercase, number, special char</small>
             <span v-if="validationErrors.password" class="error-text">{{ validationErrors.password }}</span>
           </div>
