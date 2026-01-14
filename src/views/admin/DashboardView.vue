@@ -1,3 +1,33 @@
+<script setup lang="ts">
+import { onMounted, computed } from 'vue'
+import { useAuth } from '@/composables/useAuth'
+import { useUserManagement } from '@/composables/useUserManagement'
+
+const { user, logout } = useAuth()
+const { users, fetchUsers, isLoading } = useUserManagement()
+
+// Stats computed from users data
+const totalUsers = computed(() => users.value.length)
+const activeEmployees = computed(() =>
+  users.value.filter(u => u.role === 'employee' && !u.is_suspended).length
+)
+const trainees = computed(() =>
+  users.value.filter(u => u.role === 'trainee').length
+)
+const suspendedUsers = computed(() =>
+  users.value.filter(u => u.is_suspended).length
+)
+
+onMounted(async () => {
+  // Fetch users for stats display
+  await fetchUsers()
+})
+
+async function handleLogout() {
+  await logout()
+}
+</script>
+
 <template>
   <div class="dashboard">
     <header class="dashboard-header">
@@ -47,36 +77,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { onMounted, computed } from 'vue'
-import { useAuth } from '@/composables/useAuth'
-import { useUserManagement } from '@/composables/useUserManagement'
-
-const { user, logout } = useAuth()
-const { users, fetchUsers, isLoading } = useUserManagement()
-
-// Stats computed from users data
-const totalUsers = computed(() => users.value.length)
-const activeEmployees = computed(() =>
-  users.value.filter(u => u.role === 'employee' && !u.is_suspended).length
-)
-const trainees = computed(() =>
-  users.value.filter(u => u.role === 'trainee').length
-)
-const suspendedUsers = computed(() =>
-  users.value.filter(u => u.is_suspended).length
-)
-
-onMounted(async () => {
-  // Fetch users for stats display
-  await fetchUsers()
-})
-
-async function handleLogout() {
-  await logout()
-}
-</script>
 
 <style scoped>
 .dashboard {

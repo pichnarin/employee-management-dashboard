@@ -1,41 +1,3 @@
-<template>
-  <div class="otp-container">
-    <div class="otp-card">
-      <h1>{{ appName }}</h1>
-      <h2>Verify OTP</h2>
-      <p class="subtitle">Enter the OTP code sent to your email</p>
-
-      <form @submit.prevent="handleSubmit">
-        <div class="form-group">
-          <label for="otp">OTP Code</label>
-          <input
-            id="otp"
-            v-model="formData.otp"
-            type="text"
-            placeholder="Enter 4-digit OTP"
-            maxlength="4"
-            required
-            :disabled="isLoading"
-            @input="formatOTP"
-          />
-        </div>
-
-        <div v-if="error" class="error-message">
-          {{ error }}
-        </div>
-
-        <button type="submit" :disabled="isLoading || formData.otp.length !== 4" class="btn-primary">
-          {{ isLoading ? 'Verifying...' : 'Verify OTP' }}
-        </button>
-
-        <button type="button" @click="goBack" class="btn-secondary" :disabled="isLoading">
-          Back to Login
-        </button>
-      </form>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
@@ -105,6 +67,44 @@ function goBack() {
   router.push({ name: 'login' })
 }
 </script>
+
+<template>
+  <div class="otp-container">
+    <div class="otp-card">
+      <h1>{{ appName }}</h1>
+      <h2>Verify OTP</h2>
+      <p class="subtitle">Enter the OTP code sent to your email</p>
+
+      <form @submit.prevent="handleSubmit">
+        <div class="form-group">
+          <label for="otp">OTP Code</label>
+          <input
+            id="otp"
+            v-model="formData.otp"
+            type="text"
+            placeholder="Enter 4-digit OTP"
+            maxlength="4"
+            required
+            :disabled="isLoading"
+            @input="formatOTP"
+          />
+        </div>
+
+        <div v-if="error" class="error-message">
+          {{ error }}
+        </div>
+
+        <button type="submit" :disabled="isLoading || formData.otp.length !== 4" class="btn-primary">
+          {{ isLoading ? 'Verifying...' : 'Verify OTP' }}
+        </button>
+
+        <button type="button" @click="goBack" class="btn-secondary" :disabled="isLoading">
+          Back to Login
+        </button>
+      </form>
+    </div>
+  </div>
+</template>
 
 <style scoped>
 .otp-container {

@@ -1,3 +1,65 @@
+<script setup lang="ts">
+import { ref, onMounted, watch } from 'vue'
+import { useUserManagement } from '@/composables/useUserManagement'
+import { useNotification } from '@/composables/useNotification'
+
+const {
+  users,
+  pagination,
+  isLoading,
+  isDeleting,
+  fetchUsers,
+  deleteUser: deleteUserAction,
+  setSearch,
+  setRoleFilter,
+  goToPage,
+  navigateToUserDetail
+} = useUserManagement()
+
+const notification = useNotification()
+
+const searchQuery = ref('')
+const roleFilter = ref('')
+
+onMounted(async () => {
+  await fetchUsers()
+})
+
+// Debounced search
+let searchTimeout: ReturnType<typeof setTimeout>
+watch(searchQuery, (newValue) => {
+  clearTimeout(searchTimeout)
+  searchTimeout = setTimeout(() => {
+    setSearch(newValue)
+    fetchUsers()
+  }, 300)
+})
+
+function handleFilter() {
+  setRoleFilter(roleFilter.value)
+  fetchUsers()
+}
+
+function handlePageChange(page: number) {
+  goToPage(page)
+  fetchUsers()
+}
+
+function viewUser(userId: string) {
+  navigateToUserDetail(userId)
+}
+
+async function handleDeleteUser(userId: string) {
+  if (!confirm('Are you sure you want to delete this user?')) return
+
+  const result = await deleteUserAction(userId)
+
+  if (result.success) {
+    await fetchUsers() // Refresh the list
+  }
+}
+</script>
+
 <template>
   <div class="user-list">
     <header class="page-header">
@@ -83,68 +145,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
-import { useUserManagement } from '@/composables/useUserManagement'
-import { useNotification } from '@/composables/useNotification'
-
-const {
-  users,
-  pagination,
-  isLoading,
-  isDeleting,
-  fetchUsers,
-  deleteUser: deleteUserAction,
-  setSearch,
-  setRoleFilter,
-  goToPage,
-  navigateToUserDetail
-} = useUserManagement()
-
-const notification = useNotification()
-
-const searchQuery = ref('')
-const roleFilter = ref('')
-
-onMounted(async () => {
-  await fetchUsers()
-})
-
-// Debounced search
-let searchTimeout: ReturnType<typeof setTimeout>
-watch(searchQuery, (newValue) => {
-  clearTimeout(searchTimeout)
-  searchTimeout = setTimeout(() => {
-    setSearch(newValue)
-    fetchUsers()
-  }, 300)
-})
-
-function handleFilter() {
-  setRoleFilter(roleFilter.value)
-  fetchUsers()
-}
-
-function handlePageChange(page: number) {
-  goToPage(page)
-  fetchUsers()
-}
-
-function viewUser(userId: string) {
-  navigateToUserDetail(userId)
-}
-
-async function handleDeleteUser(userId: string) {
-  if (!confirm('Are you sure you want to delete this user?')) return
-
-  const result = await deleteUserAction(userId)
-
-  if (result.success) {
-    await fetchUsers() // Refresh the list
-  }
-}
-</script>
 
 <style scoped>
 .user-list {

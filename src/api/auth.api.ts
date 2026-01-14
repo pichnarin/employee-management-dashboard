@@ -15,10 +15,13 @@ export const authApi = {
    * Login - sends OTP to email
    */
   async login(payload: LoginPayload): Promise<ApiResponse<{ message: string }>> {
+
     const response = await apiClient.post<ApiResponse<{ message: string }>>(
       '/auth/login',
       payload
     )
+
+    console.log('Login url:', response.config.baseURL?.toString());
     return response.data
   },
 

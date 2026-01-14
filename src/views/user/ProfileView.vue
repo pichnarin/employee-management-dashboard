@@ -1,3 +1,23 @@
+<script setup lang="ts">
+import { computed } from 'vue'
+import { useAuth } from '@/composables/useAuth'
+
+const { user, isLoading } = useAuth()
+
+// Format date for better display
+const formattedDob = computed(() => {
+  if (!user.value?.dob) return 'N/A'
+  const date = new Date(user.value.dob)
+  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+})
+
+// Capitalize gender
+const formattedGender = computed(() => {
+  if (!user.value?.gender) return 'N/A'
+  return user.value.gender.charAt(0).toUpperCase() + user.value.gender.slice(1)
+})
+</script>
+
 <template>
   <div class="profile">
     <header class="page-header">
@@ -52,26 +72,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { computed } from 'vue'
-import { useAuth } from '@/composables/useAuth'
-
-const { user, isLoading } = useAuth()
-
-// Format date for better display
-const formattedDob = computed(() => {
-  if (!user.value?.dob) return 'N/A'
-  const date = new Date(user.value.dob)
-  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
-})
-
-// Capitalize gender
-const formattedGender = computed(() => {
-  if (!user.value?.gender) return 'N/A'
-  return user.value.gender.charAt(0).toUpperCase() + user.value.gender.slice(1)
-})
-</script>
 
 <style scoped>
 .profile {

@@ -1,46 +1,3 @@
-<template>
-  <div class="login-container">
-    <div class="login-card">
-      <h1>{{ appName }}</h1>
-      <h2>Login</h2>
-
-      <form @submit.prevent="handleSubmit">
-        <div class="form-group">
-          <label for="identifier">Email or Username</label>
-          <input
-            id="identifier"
-            v-model="formData.identifier"
-            type="text"
-            placeholder="Enter email or username"
-            required
-            :disabled="isLoading"
-          />
-        </div>
-
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input
-            id="password"
-            v-model="formData.password"
-            type="password"
-            placeholder="Enter password"
-            required
-            :disabled="isLoading"
-          />
-        </div>
-
-        <div v-if="error" class="error-message">
-          {{ error }}
-        </div>
-
-        <button type="submit" :disabled="isLoading" class="btn-primary">
-          {{ isLoading ? 'Logging in...' : 'Login' }}
-        </button>
-      </form>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -55,6 +12,12 @@ const formData = ref<LoginPayload>({
   identifier: '',
   password: ''
 })
+
+const showPassword = ref(false)
+
+const togglePassword = () => {
+  showPassword.value = !showPassword.value
+}
 
 const error = ref<string | null>(null)
 
@@ -89,6 +52,59 @@ async function handleSubmit() {
   }
 }
 </script>
+
+<template>
+  <div class="login-container">
+    <div class="login-card">
+      <h1>{{ appName }}</h1>
+      <h2>Login</h2>
+
+      <form @submit.prevent="handleSubmit">
+        <div class="form-group">
+          <label for="identifier">Email or Username</label>
+          <input
+            id="identifier"
+            v-model="formData.identifier"
+            type="text"
+            placeholder="Enter email or username"
+            required
+            :disabled="isLoading"
+          />
+        </div>
+
+         <div class="form-group">
+    <label
+      for="password"
+      @click.prevent="togglePassword"
+      style="cursor: pointer;"
+    >
+      Password
+      <span class="toggle-text">
+        ({{ showPassword ? 'Hide' : 'Show' }})
+      </span>
+    </label>
+
+    <input
+      id="password"
+      v-model="formData.password"
+      :type="showPassword ? 'text' : 'password'"
+      placeholder="Enter password"
+      required
+      :disabled="isLoading"
+    />
+  </div>
+
+        <div v-if="error" class="error-message">
+          {{ error }}
+        </div>
+
+        <button type="submit" :disabled="isLoading" class="btn-primary">
+          {{ isLoading ? 'Logging in...' : 'Login' }}
+        </button>
+      </form>
+    </div>
+  </div>
+</template>
 
 <style scoped>
 .login-container {

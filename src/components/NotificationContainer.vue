@@ -1,3 +1,23 @@
+<script setup lang="ts">
+import { useNotification, type NotificationType } from '@/composables/useNotification'
+const { notifications, dismiss } = useNotification()
+
+function getIcon(type: NotificationType): string {
+  switch (type) {
+    case 'success':
+      return '✓'
+    case 'error':
+      return '✕'
+    case 'warning':
+      return '⚠'
+    case 'info':
+      return 'ℹ'
+    default:
+      return 'ℹ'
+  }
+}
+</script>
+
 <template>
   <div class="notification-container">
     <transition-group name="notification">
@@ -16,27 +36,6 @@
     </transition-group>
   </div>
 </template>
-
-<script setup lang="ts">
-import { useNotification, type NotificationType } from '@/composables/useNotification'
-
-const { notifications, dismiss } = useNotification()
-
-function getIcon(type: NotificationType): string {
-  switch (type) {
-    case 'success':
-      return '✓'
-    case 'error':
-      return '✕'
-    case 'warning':
-      return '⚠'
-    case 'info':
-      return 'ℹ'
-    default:
-      return 'ℹ'
-  }
-}
-</script>
 
 <style scoped>
 .notification-container {

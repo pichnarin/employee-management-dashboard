@@ -22,6 +22,9 @@ export const userApi = {
     const response = await apiClient.get<PaginatedResponse<User>>('/get-users', {
       params
     })
+
+    // console.log('Get Users Response Data:', JSON.stringify(response.data));
+
     return response.data
   },
 

@@ -1,4 +1,4 @@
-import { ref, reactive, computed, type Ref } from 'vue'
+import { ref, reactive, computed, toRaw, type Ref } from 'vue'
 import type { ValidationRule } from '@/utils/validation.util'
 import { validateField } from '@/utils/validation.util'
 
@@ -52,7 +52,8 @@ export function useForm<T extends Record<string, any>>(
     const validation = fieldValidations[fieldName as string]
     if (!validation) return true
 
-    const value = formData[fieldName]
+    // Use toRaw to get the plain value, not the reactive proxy
+    const value = toRaw((formData as any)[fieldName])
     const errors = validateField(value, validation.rules)
     validation.errors.value = errors
     return errors.length === 0
@@ -91,7 +92,7 @@ export function useForm<T extends Record<string, any>>(
    * Handle field change event
    */
   function handleChange(fieldName: keyof T, value: any): void {
-    formData[fieldName] = value
+    ;(formData as any)[fieldName] = value
 
     const validation = fieldValidations[fieldName as string]
     if (validation) {
@@ -178,6 +179,22 @@ export function useForm<T extends Record<string, any>>(
     )
   })
 
+  /**
+   * Get raw form data (non-reactive) for API submission
+   * This is crucial for sending data to APIs as reactive proxies don't serialize properly
+   */
+  function getFormData(): T {
+    return toRaw(formData) as T
+  }
+
+  /**
+   * Update form data with fetched values (e.g., when editing existing data)
+   * This properly handles reactive updates
+   */
+  function setFormData(data: Partial<T>): void {
+    Object.assign(formData, data)
+  }
+
   return {
     formData,
     isSubmitting,
@@ -193,6 +210,8 @@ export function useForm<T extends Record<string, any>>(
     hasFieldError,
     resetForm,
     clearErrors,
-    setFieldErrors
+    setFieldErrors,
+    getFormData,
+    setFormData
   }
 }

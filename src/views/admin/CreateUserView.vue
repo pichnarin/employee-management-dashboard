@@ -1,3 +1,117 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useUserManagement } from '@/composables/useUserManagement'
+import { useNotification } from '@/composables/useNotification'
+import { isValidEmail, isValidPassword, isValidPhoneNumber, getPasswordValidationMessage } from '@/utils/validation.util'
+import type { CreateUserPayload, Gender, UserRole } from '@/types'
+
+const { createUser, navigateToUserList } = useUserManagement()
+const notification = useNotification()
+
+const formData = ref<CreateUserPayload>({
+  first_name: '',
+  last_name: '',
+  dob: '',
+  address: '',
+  gender: '' as Gender,
+  nationality: '',
+  email: '',
+  username: '',
+  phone_number: '',
+  password: '',
+  password_confirmation: '',
+  role: '' as UserRole,
+  contact_first_name: '',
+  contact_last_name: '',
+  contact_relationship: '',
+  contact_phone_number: '',
+  contact_address: '',
+  contact_social_media: ''
+})
+
+const isLoading = ref(false)
+const error = ref<string | null>(null)
+const validationErrors = ref<Record<string, string>>({})
+
+function handleFileChange(event: Event, fieldName: keyof CreateUserPayload) {
+  const input = event.target as HTMLInputElement
+  if (input.files && input.files[0]) {
+    const file = input.files[0]
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      notification.error('File size must not exceed 5MB')
+      input.value = ''
+      return
+    }
+
+    (formData.value as any)[fieldName] = file
+  }
+}
+
+function validateForm(): boolean {
+  validationErrors.value = {}
+
+  // Email validation
+  if (!isValidEmail(formData.value.email)) {
+    validationErrors.value.email = 'Please enter a valid email address'
+  }
+
+  // Password validation
+  const passwordError = getPasswordValidationMessage(formData.value.password)
+  if (passwordError) {
+    validationErrors.value.password = passwordError
+  }
+
+  // Password confirmation
+  if (formData.value.password !== formData.value.password_confirmation) {
+    validationErrors.value.password_confirmation = 'Passwords do not match'
+  }
+
+  // Phone number validation
+  if (!isValidPhoneNumber(formData.value.phone_number)) {
+    validationErrors.value.phone_number = 'Phone number must include country code (e.g., +1234567890)'
+  }
+
+  // Contact phone validation
+  if (!isValidPhoneNumber(formData.value.contact_phone_number)) {
+    validationErrors.value.contact_phone_number = 'Contact phone must include country code (e.g., +1234567890)'
+  }
+
+  return Object.keys(validationErrors.value).length === 0
+}
+
+async function handleSubmit() {
+  if (!validateForm()) {
+    error.value = 'Please fix the validation errors before submitting'
+    notification.error('Please fix the validation errors')
+    return
+  }
+
+  try {
+    isLoading.value = true
+    error.value = null
+
+    const result = await createUser(formData.value)
+
+    if (result.success) {
+      navigateToUserList()
+    } else {
+      error.value = result.error || 'Failed to create user'
+    }
+  } catch (err) {
+    error.value = 'An unexpected error occurred. Please try again.'
+    notification.error('Failed to create user')
+  } finally {
+    isLoading.value = false
+  }
+}
+
+function handleCancel() {
+  navigateToUserList()
+}
+</script>
+
 <template>
   <div class="create-user">
     <header class="page-header">
@@ -167,120 +281,6 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref } from 'vue'
-import { useUserManagement } from '@/composables/useUserManagement'
-import { useNotification } from '@/composables/useNotification'
-import { isValidEmail, isValidPassword, isValidPhoneNumber, getPasswordValidationMessage } from '@/utils/validation.util'
-import type { CreateUserPayload, Gender, UserRole } from '@/types'
-
-const { createUser, navigateToUserList } = useUserManagement()
-const notification = useNotification()
-
-const formData = ref<CreateUserPayload>({
-  first_name: '',
-  last_name: '',
-  dob: '',
-  address: '',
-  gender: '' as Gender,
-  nationality: '',
-  email: '',
-  username: '',
-  phone_number: '',
-  password: '',
-  password_confirmation: '',
-  role: '' as UserRole,
-  contact_first_name: '',
-  contact_last_name: '',
-  contact_relationship: '',
-  contact_phone_number: '',
-  contact_address: '',
-  contact_social_media: ''
-})
-
-const isLoading = ref(false)
-const error = ref<string | null>(null)
-const validationErrors = ref<Record<string, string>>({})
-
-function handleFileChange(event: Event, fieldName: keyof CreateUserPayload) {
-  const input = event.target as HTMLInputElement
-  if (input.files && input.files[0]) {
-    const file = input.files[0]
-
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      notification.error('File size must not exceed 5MB')
-      input.value = ''
-      return
-    }
-
-    (formData.value as any)[fieldName] = file
-  }
-}
-
-function validateForm(): boolean {
-  validationErrors.value = {}
-
-  // Email validation
-  if (!isValidEmail(formData.value.email)) {
-    validationErrors.value.email = 'Please enter a valid email address'
-  }
-
-  // Password validation
-  const passwordError = getPasswordValidationMessage(formData.value.password)
-  if (passwordError) {
-    validationErrors.value.password = passwordError
-  }
-
-  // Password confirmation
-  if (formData.value.password !== formData.value.password_confirmation) {
-    validationErrors.value.password_confirmation = 'Passwords do not match'
-  }
-
-  // Phone number validation
-  if (!isValidPhoneNumber(formData.value.phone_number)) {
-    validationErrors.value.phone_number = 'Phone number must include country code (e.g., +1234567890)'
-  }
-
-  // Contact phone validation
-  if (!isValidPhoneNumber(formData.value.contact_phone_number)) {
-    validationErrors.value.contact_phone_number = 'Contact phone must include country code (e.g., +1234567890)'
-  }
-
-  return Object.keys(validationErrors.value).length === 0
-}
-
-async function handleSubmit() {
-  if (!validateForm()) {
-    error.value = 'Please fix the validation errors before submitting'
-    notification.error('Please fix the validation errors')
-    return
-  }
-
-  try {
-    isLoading.value = true
-    error.value = null
-
-    const result = await createUser(formData.value)
-
-    if (result.success) {
-      navigateToUserList()
-    } else {
-      error.value = result.error || 'Failed to create user'
-    }
-  } catch (err) {
-    error.value = 'An unexpected error occurred. Please try again.'
-    notification.error('Failed to create user')
-  } finally {
-    isLoading.value = false
-  }
-}
-
-function handleCancel() {
-  navigateToUserList()
-}
-</script>
-
 <style scoped>
 .create-user {
   min-height: 100vh;
@@ -343,7 +343,7 @@ function handleCancel() {
   display: block;
   margin-bottom: 5px;
   font-weight: 500;
-  color: #555;
+  color: #000000;
 }
 
 .form-group input,
@@ -355,6 +355,7 @@ function handleCancel() {
   border-radius: 5px;
   font-size: 14px;
   box-sizing: border-box;
+  color: #000000;
 }
 
 .form-group small {
