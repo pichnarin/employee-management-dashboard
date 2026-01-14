@@ -199,32 +199,28 @@ function handleCancel() {
 
         <div class="form-row">
           <div class="form-group" :class="{ 'has-error': validationErrors.password }">
-           <label
-      for="password"
-      @click.prevent="togglePassword"
-      style="cursor: pointer;"
-    >
-      Password
-      <span class="toggle-text">
-        ({{ showPassword ? 'Hide' : 'Show' }})
-      </span>
-    </label>
+            <label for="password" @click.prevent="togglePassword" style="cursor: pointer;">
+              Password
+              <span class="toggle-text">
+                ({{ showPassword ? 'Hide' : 'Show' }})
+              </span>
+            </label>
 
-    <input
-      id="password"
-      v-model="formData.password"
-      :type="showPassword ? 'text' : 'password'"
-      placeholder="Enter password"
-      required
-      :disabled="isLoading"
-    />
+            <input id="password" v-model="formData.password" :type="showPassword ? 'text' : 'password'"
+              placeholder="Enter password" required :disabled="isLoading" />
             <small>Min 8 chars, uppercase, lowercase, number, special char</small>
             <span v-if="validationErrors.password" class="error-text">{{ validationErrors.password }}</span>
           </div>
           <div class="form-group" :class="{ 'has-error': validationErrors.password_confirmation }">
-            <label for="password_confirmation">Confirm Password *</label>
-            <input v-model="formData.password_confirmation" id="password_confirmation" type="password" required />
-            <span v-if="validationErrors.password_confirmation" class="error-text">{{ validationErrors.password_confirmation }}</span>
+            <label for="password_confirmation" @click.prevent="togglePassword" style="cursor: pointer;">
+              Password
+              <span class="toggle-text">
+                ({{ showPassword ? 'Hide' : 'Show' }})
+              </span>
+            </label>
+            <input v-model="formData.password_confirmation" id="password_confirmation" :type="showPassword ? 'text' : 'password'" required />
+            <span v-if="validationErrors.password_confirmation" class="error-text">{{
+              validationErrors.password_confirmation }}</span>
           </div>
         </div>
       </div>
@@ -249,8 +245,10 @@ function handleCancel() {
           </div>
           <div class="form-group" :class="{ 'has-error': validationErrors.contact_phone_number }">
             <label for="contact_phone_number">Contact Phone *</label>
-            <input v-model="formData.contact_phone_number" id="contact_phone_number" type="tel" placeholder="+1234567890" required />
-            <span v-if="validationErrors.contact_phone_number" class="error-text">{{ validationErrors.contact_phone_number }}</span>
+            <input v-model="formData.contact_phone_number" id="contact_phone_number" type="tel"
+              placeholder="+1234567890" required />
+            <span v-if="validationErrors.contact_phone_number" class="error-text">{{
+              validationErrors.contact_phone_number }}</span>
           </div>
         </div>
 
@@ -265,28 +263,33 @@ function handleCancel() {
         <div class="form-row">
           <div class="form-group">
             <label for="professtional_photo">Professional Photo</label>
-            <input @change="handleFileChange($event, 'professtional_photo')" id="professtional_photo" type="file" accept="image/*" />
+            <input @change="handleFileChange($event, 'professtional_photo')" id="professtional_photo" type="file"
+              accept="image/*" />
           </div>
           <div class="form-group">
             <label for="nationality_card">Nationality Card</label>
-            <input @change="handleFileChange($event, 'nationality_card')" id="nationality_card" type="file" accept="image/*,application/pdf" />
+            <input @change="handleFileChange($event, 'nationality_card')" id="nationality_card" type="file"
+              accept="image/*,application/pdf" />
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group">
             <label for="family_book">Family Book</label>
-            <input @change="handleFileChange($event, 'family_book')" id="family_book" type="file" accept="image/*,application/pdf" />
+            <input @change="handleFileChange($event, 'family_book')" id="family_book" type="file"
+              accept="image/*,application/pdf" />
           </div>
           <div class="form-group">
             <label for="birth_certificate">Birth Certificate</label>
-            <input @change="handleFileChange($event, 'birth_certificate')" id="birth_certificate" type="file" accept="image/*,application/pdf" />
+            <input @change="handleFileChange($event, 'birth_certificate')" id="birth_certificate" type="file"
+              accept="image/*,application/pdf" />
           </div>
         </div>
 
         <div class="form-group">
           <label for="degreee_certificate">Degree Certificate</label>
-          <input @change="handleFileChange($event, 'degreee_certificate')" id="degreee_certificate" type="file" accept="image/*,application/pdf" />
+          <input @change="handleFileChange($event, 'degreee_certificate')" id="degreee_certificate" type="file"
+            accept="image/*,application/pdf" />
         </div>
       </div>
 
