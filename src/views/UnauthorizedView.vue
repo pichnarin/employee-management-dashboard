@@ -4,7 +4,7 @@
       <h1>403</h1>
       <h2>Access Denied</h2>
       <p>You don't have permission to access this page.</p>
-      <router-link to="/" class="btn-home">Go to Homepage</router-link>
+      <router-link to="/login" class="btn-home">Go to Homepage</router-link>
     </div>
   </div>
 </template>
