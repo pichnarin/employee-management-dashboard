@@ -23,7 +23,7 @@ export const userApi = {
       params
     })
 
-    // console.log('Get Users Response Data:', JSON.stringify(response.data));
+    console.log('Get Users Response Data:', JSON.stringify(response.data));
 
     return response.data
   },
@@ -91,6 +91,16 @@ export const userApi = {
   async hardDeleteUser(userId: string): Promise<ApiResponse> {
     const response = await apiClient.delete<ApiResponse>(
       `/hard-delete-user/${userId}`
+    )
+    return response.data
+  },
+
+  /**
+   * Get user by ID (returns same data as get-profile)
+   */
+  async getUserById(userId: string): Promise<ApiResponse<User>> {
+    const response = await apiClient.get<ApiResponse<User>>(
+      `/user-detail/${userId}`
     )
     return response.data
   }

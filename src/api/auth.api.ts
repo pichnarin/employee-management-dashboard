@@ -74,6 +74,9 @@ export const authApi = {
    */
   async getProfile(): Promise<ApiResponse<User>> {
     const response = await apiClient.get<ApiResponse<User>>('/get-profile')
+
+    console.log('Get Profile Response Data:', JSON.stringify(response.data));
+
     return response.data
   }
 }

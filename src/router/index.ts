@@ -8,6 +8,7 @@ const OTPVerificationView = () => import('@/views/auth/OTPVerificationView.vue')
 const DashboardView = () => import('@/views/admin/DashboardView.vue')
 const UserListView = () => import('@/views/admin/UserListView.vue')
 const CreateUserView = () => import('@/views/admin/CreateUserView.vue')
+const UserDetailView = () => import('@/views/admin/UserDetailView.vue')
 const ProfileView = () => import('@/views/user/ProfileView.vue')
 const NotFoundView = () => import('@/views/NotFoundView.vue')
 const UnauthorizedView = () => import('@/views/UnauthorizedView.vue')
@@ -57,6 +58,15 @@ const routes: RouteRecordRaw[] = [
     path: '/users/create',
     name: 'create-user',
     component: CreateUserView,
+    meta: {
+      requiresAuth: true,
+      allowedRoles: ['admin']
+    }
+  },
+  {
+    path: '/users/:id',
+    name: 'user-detail',
+    component: UserDetailView,
     meta: {
       requiresAuth: true,
       allowedRoles: ['admin']

@@ -11,6 +11,8 @@ export interface User {
   gender: Gender
   nationality: string
   is_suspended: boolean
+  personal_information?: PersonalInformation,
+  emergency_contact?: EmergencyContact,
   role: UserRole
   email: string
   username: string
@@ -23,10 +25,15 @@ export interface PersonalInformation {
   id: string
   user_id: string
   professtional_photo: string | null
+  professtional_photo_url: string | null
   nationality_card: string | null
+  nationality_card_url: string | null
   family_book: string | null
+  family_book_url: string | null
   birth_certificate: string | null
-  degreee_certificate: string | null
+  birth_certificate_url: string | null
+  degree_certificate: string | null
+  degree_certificate_url: string | null
   social_media: string | null
   created_at: string
   updated_at?: string

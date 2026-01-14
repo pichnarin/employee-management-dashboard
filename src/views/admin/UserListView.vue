@@ -25,6 +25,21 @@ onMounted(async () => {
   await fetchUsers()
 })
 
+const showImageModal = ref(false)
+const activeImage = ref<string | null>(null)
+
+function openImage(imageUrl?: string | null) {
+  if (!imageUrl) return
+  activeImage.value = imageUrl
+  showImageModal.value = true
+}
+
+function closeImage() {
+  showImageModal.value = false
+  activeImage.value = null
+}
+
+
 // Debounced search
 let searchTimeout: ReturnType<typeof setTimeout>
 watch(searchQuery, (newValue) => {
@@ -62,6 +77,12 @@ async function handleDeleteUser(userId: string) {
 
 <template>
   <div class="user-list">
+    <div v-if="showImageModal" class="image-modal" @click.self="closeImage">
+      <img :src="activeImage!" class="modal-image" />
+
+      <button class="close-btn" @click="closeImage">✕</button>
+    </div>
+
     <header class="page-header">
       <h1>User Management</h1>
       <router-link to="/users/create" class="btn-create">
@@ -70,12 +91,7 @@ async function handleDeleteUser(userId: string) {
     </header>
 
     <div class="filters">
-      <input
-        v-model="searchQuery"
-        type="text"
-        placeholder="Search by name, email, username..."
-        class="search-input"
-      />
+      <input v-model="searchQuery" type="text" placeholder="Search by name, email, username..." class="search-input" />
       <select v-model="roleFilter" @change="handleFilter" class="filter-select">
         <option value="">All Roles</option>
         <option value="admin">Admin</option>
@@ -94,20 +110,29 @@ async function handleDeleteUser(userId: string) {
       <table class="user-table">
         <thead>
           <tr>
+            <th>Profile Image</th>
             <th>Name</th>
             <th>Email</th>
             <th>Role</th>
             <th>Phone</th>
+            <th>Nationality</th>
             <th>Status</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="user in users" :key="user.id">
+            <td>
+              <img :src="user.personal_information?.professtional_photo_url || '/default-profile.png'"
+                alt="Profile Image" class="profile-image" loading="lazy"
+                @click="openImage(user.personal_information?.professtional_photo_url)" />
+
+            </td>
             <td>{{ user.full_name }}</td>
             <td>{{ user.email }}</td>
             <td><span :class="['role-badge', user.role]">{{ user.role }}</span></td>
             <td>{{ user.phone_number }}</td>
+            <td>{{ user.nationality }}</td>
             <td>
               <span :class="['status-badge', user.is_suspended ? 'suspended' : 'active']">
                 {{ user.is_suspended ? 'Suspended' : 'Active' }}
@@ -124,21 +149,15 @@ async function handleDeleteUser(userId: string) {
       </table>
 
       <div v-if="pagination" class="pagination">
-        <button
-          @click="handlePageChange(pagination.current_page - 1)"
-          :disabled="pagination.current_page === 1"
-          class="btn-page"
-        >
+        <button @click="handlePageChange(pagination.current_page - 1)" :disabled="pagination.current_page === 1"
+          class="btn-page">
           Previous
         </button>
         <span class="page-info">
           Page {{ pagination.current_page }} of {{ pagination.last_page }}
         </span>
-        <button
-          @click="handlePageChange(pagination.current_page + 1)"
-          :disabled="pagination.current_page === pagination.last_page"
-          class="btn-page"
-        >
+        <button @click="handlePageChange(pagination.current_page + 1)"
+          :disabled="pagination.current_page === pagination.last_page" class="btn-page">
           Next
         </button>
       </div>
@@ -165,6 +184,40 @@ async function handleDeleteUser(userId: string) {
   font-size: 28px;
   color: #333;
 }
+
+.image-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modal-image {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 10px;
+  object-fit: contain;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  touch-action: pinch-zoom;
+}
+
+.close-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  border: none;
+  font-size: 22px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
 
 .btn-create {
   padding: 12px 24px;
@@ -221,6 +274,21 @@ async function handleDeleteUser(userId: string) {
   font-size: 14px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+}
+
+.profile-image {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+  border: 2px solid #eee;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.profile-image:hover {
+  transform: scale(1.1);
+  border-color: #667eea;
 }
 
 .role-badge {

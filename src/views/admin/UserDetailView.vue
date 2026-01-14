@@ -1,8 +1,15 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { useAuth } from '@/composables/useAuth'
+import { computed, ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { userApi } from '@/api/user.api'
+import type { User } from '@/types'
 
-const { user, isLoading } = useAuth()
+const route = useRoute()
+const router = useRouter()
+
+const user = ref<User | null>(null)
+const isLoading = ref(true)
+const error = ref<string | null>(null)
 
 // Image modal state
 const showImageModal = ref(false)
@@ -21,6 +28,35 @@ function closeImage() {
   activeImage.value = null
   activeImageTitle.value = ''
 }
+
+// Fetch user by ID
+async function fetchUser() {
+  const userId = route.params.id as string
+  if (!userId) {
+    error.value = 'User ID not provided'
+    isLoading.value = false
+    return
+  }
+
+  try {
+    isLoading.value = true
+    error.value = null
+    const response = await userApi.getUserById(userId)
+    if (response.success && response.data) {
+      user.value = response.data
+    } else {
+      error.value = response.message || 'Failed to fetch user'
+    }
+  } catch (err: any) {
+    error.value = err.response?.data?.message || 'Failed to fetch user details'
+  } finally {
+    isLoading.value = false
+  }
+}
+
+onMounted(() => {
+  fetchUser()
+})
 
 // Format date for better display
 const formattedDob = computed(() => {
@@ -41,10 +77,14 @@ const formattedCreatedAt = computed(() => {
   const date = new Date(user.value.created_at)
   return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
 })
+
+function goBack() {
+  router.push('/users')
+}
 </script>
 
 <template>
-  <div class="profile">
+  <div class="user-detail">
     <!-- Image Modal -->
     <div v-if="showImageModal" class="image-modal" @click.self="closeImage">
       <div class="modal-content">
@@ -55,11 +95,16 @@ const formattedCreatedAt = computed(() => {
     </div>
 
     <header class="page-header">
-      <h1>My Profile</h1>
-      <router-link to="/dashboard" class="btn-back">Back to Dashboard</router-link>
+      <h1>User Details</h1>
+      <button @click="goBack" class="btn-back">Back to Users</button>
     </header>
 
-    <div v-if="isLoading" class="loading">Loading profile...</div>
+    <div v-if="isLoading" class="loading">Loading user details...</div>
+
+    <div v-else-if="error" class="error-message">
+      {{ error }}
+      <button @click="goBack" class="btn-back" style="margin-top: 20px;">Back to Users</button>
+    </div>
 
     <div v-else-if="user" class="profile-content">
       <!-- Profile Header with Photo -->
@@ -75,6 +120,9 @@ const formattedCreatedAt = computed(() => {
             <h2>{{ user.full_name }}</h2>
             <span :class="['role-badge', user.role]">{{ user.role }}</span>
             <p class="member-since">Member since {{ formattedCreatedAt }}</p>
+            <span :class="['status-badge', user.is_suspended ? 'suspended' : 'active']">
+              {{ user.is_suspended ? 'Suspended' : 'Active' }}
+            </span>
           </div>
         </div>
       </div>
@@ -97,7 +145,7 @@ const formattedCreatedAt = computed(() => {
             <span class="value">{{ user.email }}</span>
           </div>
           <div class="info-item">
-            <span class="label"> Social Media</span>
+            <span class="label">Social Media:</span>
             <span class="value">{{ user.personal_information?.social_media || 'N/A' }}</span>
           </div>
           <div class="info-item">
@@ -184,11 +232,6 @@ const formattedCreatedAt = computed(() => {
             <span v-else class="no-document">Not uploaded</span>
           </div>
         </div>
-
-        <div v-if="user.personal_information.social_media" class="info-item" style="margin-top: 20px;">
-          <span class="label">Social Media:</span>
-          <span class="value">{{ user.personal_information.social_media }}</span>
-        </div>
       </div>
 
       <!-- Emergency Contact -->
@@ -223,7 +266,7 @@ const formattedCreatedAt = computed(() => {
 </template>
 
 <style scoped>
-.profile {
+.user-detail {
   min-height: 100vh;
   background: #f5f7fa;
   padding: 40px;
@@ -249,6 +292,12 @@ const formattedCreatedAt = computed(() => {
   text-decoration: none;
   border-radius: 5px;
   font-size: 14px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-back:hover {
+  background: #7f8c8d;
 }
 
 .profile-content {
@@ -295,7 +344,7 @@ const formattedCreatedAt = computed(() => {
 }
 
 .member-since {
-  margin: 10px 0 0 0;
+  margin: 10px 0;
   font-size: 14px;
   color: #666;
 }
@@ -416,6 +465,26 @@ const formattedCreatedAt = computed(() => {
   color: #27ae60;
 }
 
+/* Status Badge */
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-block;
+  margin-top: 8px;
+}
+
+.status-badge.active {
+  background: #e5ffe5;
+  color: #27ae60;
+}
+
+.status-badge.suspended {
+  background: #ffe5e5;
+  color: #e74c3c;
+}
+
 /* Image Modal */
 .image-modal {
   position: fixed;
@@ -467,15 +536,24 @@ const formattedCreatedAt = computed(() => {
   background: rgba(255, 255, 255, 0.3);
 }
 
-.loading {
+.loading,
+.error-message {
   text-align: center;
   padding: 40px;
   color: #666;
+  background: white;
+  border-radius: 10px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.error-message {
+  color: #e74c3c;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .profile {
+  .user-detail {
     padding: 20px;
   }
 
