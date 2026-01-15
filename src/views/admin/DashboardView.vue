@@ -7,9 +7,9 @@ const { user, logout } = useAuth()
 const { users, fetchUsers, isLoading } = useUserManagement()
 
 // Stats computed from users data
-const totalUsers = computed(() => users.value.length)
+const totalEmployees = computed(() => users.value.length)
 const activeEmployees = computed(() =>
-  users.value.filter(u => u.role === 'employee' && !u.is_suspended).length
+  users.value.filter(u => u.role === 'employee').length
 )
 const trainees = computed(() =>
   users.value.filter(u => u.role === 'trainee').length
@@ -43,8 +43,8 @@ async function handleLogout() {
 
       <div v-else class="stats-grid">
         <div class="stat-card">
-          <h3>Total Users</h3>
-          <p class="stat-value">{{ totalUsers }}</p>
+          <h3>Total Employees</h3>
+          <p class="stat-value">{{ totalEmployees }}</p>
         </div>
         <div class="stat-card">
           <h3>Active Employees</h3>

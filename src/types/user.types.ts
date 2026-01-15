@@ -58,6 +58,7 @@ export interface CreateUserPayload {
   dob: string
   address: string
   gender: Gender
+  social_media?: string
   nationality: string
   email: string
   username: string

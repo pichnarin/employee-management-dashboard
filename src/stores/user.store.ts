@@ -22,7 +22,7 @@ export const useUserStore = defineStore('user', () => {
     role: '',
     is_suspended: undefined as boolean | undefined,
     page: 1,
-    per_page: 10
+    per_page: 100
   })
 
   // Actions

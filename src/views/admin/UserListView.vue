@@ -64,7 +64,7 @@ function viewUser(userId: string) {
   navigateToUserDetail(userId)
 }
 
-async function handleDeleteUser(userId: string) {
+async function handlSoftDeleteUser(userId: string) {
   if (!confirm('Are you sure you want to delete this user?')) return
 
   const result = await deleteUserAction(userId)
@@ -85,9 +85,14 @@ async function handleDeleteUser(userId: string) {
 
     <header class="page-header">
       <h1>User Management</h1>
-      <router-link to="/users/create" class="btn-create">
+      <div>
+        <router-link to="/users/create" class="btn-create">
         Create New User
       </router-link>
+      <router-link to="/dashboard" class="btn-go-back">
+        Go Back to Dashboard
+      </router-link>
+      </div>
     </header>
 
     <div class="filters">
@@ -140,7 +145,7 @@ async function handleDeleteUser(userId: string) {
             </td>
             <td class="actions">
               <button @click="viewUser(user.id)" class="btn-action btn-view">View</button>
-              <button @click="handleDeleteUser(user.id)" class="btn-action btn-delete" :disabled="isDeleting">
+              <button @click="handlSoftDeleteUser(user.id)" class="btn-action btn-delete" :disabled="isDeleting">
                 {{ isDeleting ? 'Deleting...' : 'Delete' }}
               </button>
             </td>
@@ -218,6 +223,27 @@ async function handleDeleteUser(userId: string) {
   cursor: pointer;
 }
 
+
+.btn-create {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.btn-go-back {
+  padding: 12px 24px;
+  background: #999;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 500;
+  margin-left: 10px;
+}
 
 .btn-create {
   padding: 12px 24px;

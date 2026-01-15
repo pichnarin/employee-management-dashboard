@@ -14,6 +14,7 @@ const formData = ref<CreateUserPayload>({
   dob: '',
   address: '',
   gender: '' as Gender,
+  social_media: '',
   nationality: '',
   email: '',
   username: '',
@@ -136,11 +137,11 @@ function handleCancel() {
         <div class="form-row">
           <div class="form-group">
             <label for="first_name">First Name *</label>
-            <input v-model="formData.first_name" id="first_name" type="text" required />
+            <input placeholder="Firstname" v-model="formData.first_name" id="first_name" type="text" required />
           </div>
           <div class="form-group">
             <label for="last_name">Last Name *</label>
-            <input v-model="formData.last_name" id="last_name" type="text" required />
+            <input placeholder="Lastname" v-model="formData.last_name" id="last_name" type="text" required />
           </div>
         </div>
 
@@ -161,13 +162,18 @@ function handleCancel() {
         </div>
 
         <div class="form-group">
+          <label for="social_media">Social Media</label>
+          <input placeholder="https://www.facebook.com/mock.user" v-model="formData.social_media" id="social_media" type="text" required />
+        </div>
+
+        <div class="form-group">
           <label for="address">Address *</label>
-          <textarea v-model="formData.address" id="address" rows="3" required></textarea>
+          <textarea placeholder="Sangkat Tuol Sangkae 2, Khan Russey Keo, Phnom Penh Capital" v-model="formData.address" id="address" rows="3" required></textarea>
         </div>
 
         <div class="form-group">
           <label for="nationality">Nationality *</label>
-          <input v-model="formData.nationality" id="nationality" type="text" required />
+          <input placeholder="Cambodian" v-model="formData.nationality" id="nationality" type="text" required />
         </div>
       </div>
 
@@ -176,12 +182,12 @@ function handleCancel() {
         <div class="form-row">
           <div class="form-group" :class="{ 'has-error': validationErrors.email }">
             <label for="email">Email *</label>
-            <input v-model="formData.email" id="email" type="email" required />
+            <input placeholder="user@example.com" v-model="formData.email" id="email" type="email" required />
             <span v-if="validationErrors.email" class="error-text">{{ validationErrors.email }}</span>
           </div>
           <div class="form-group">
             <label for="username">Username *</label>
-            <input v-model="formData.username" id="username" type="text" required />
+            <input placeholder="username123" v-model="formData.username" id="username" type="text" required />
           </div>
         </div>
 
@@ -243,18 +249,18 @@ function handleCancel() {
           <div class="form-row">
             <div class="form-group">
               <label for="contact_first_name">Contact First Name *</label>
-              <input v-model="formData.contact_first_name" id="contact_first_name" type="text" required />
+              <input placeholder="Contact First Name" v-model="formData.contact_first_name" id="contact_first_name" type="text" required />
             </div>
             <div class="form-group">
               <label for="contact_last_name">Contact Last Name *</label>
-              <input v-model="formData.contact_last_name" id="contact_last_name" type="text" required />
+              <input placeholder="Contact Last Name" v-model="formData.contact_last_name" id="contact_last_name" type="text" required />
             </div>
           </div>
 
           <div class="form-row">
             <div class="form-group">
               <label for="contact_relationship">Relationship *</label>
-              <input v-model="formData.contact_relationship" id="contact_relationship" type="text" required />
+              <input placeholder="Relationship" v-model="formData.contact_relationship" id="contact_relationship" type="text" required />
             </div>
             <div class="form-group" :class="{ 'has-error': validationErrors.contact_phone_number }">
               <label for="contact_phone_number">Contact Phone *</label>
@@ -266,8 +272,14 @@ function handleCancel() {
           </div>
 
           <div class="form-group">
+            <label for="contact_social_media">Contact Social Media</label>
+            <input placeholder="https://www.facebook.com/mock.user" v-model="formData.contact_social_media" id="contact_social_media" type="text" required />
+          </div>
+
+
+          <div class="form-group">
             <label for="contact_address">Contact Address *</label>
-            <textarea v-model="formData.contact_address" id="contact_address" rows="2" required></textarea>
+            <textarea placeholder="Sangkat Tuol Sangkae 2, Khan Russey Keo, Phnom Penh Capital" v-model="formData.contact_address" id="contact_address" rows="2" required></textarea>
           </div>
         </div>
 
